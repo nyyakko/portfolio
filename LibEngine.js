@@ -63,11 +63,20 @@ export class LibEngine {
         return this.context.canvasContext.measureText(text).width;
     }
 
-    drawCircle = (centerX, centerY, radius, color) => {
+    drawCircle = (centerX, centerY, radius, color, thickness = 1) => {
         this.context.canvasContext.beginPath();
+        this.context.canvasContext.lineWidth = thickness;
         this.context.canvasContext.fillStyle = color;
         this.context.canvasContext.arc(centerX, centerY, radius, 0, 2 * Math.PI);
         this.context.canvasContext.fill();
+    }
+
+    drawCircleContour = (centerX, centerY, radius, color, thickness = 1) => {
+        this.context.canvasContext.beginPath();
+        this.context.canvasContext.lineWidth = thickness;
+        this.context.canvasContext.strokeStyle = color;
+        this.context.canvasContext.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+        this.context.canvasContext.stroke();
     }
 
     isKeyPressed = (key) => {

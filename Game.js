@@ -15,6 +15,21 @@ class Entity {
         this.velocity = velocity;
         this.health = health;
         this.lifetime = lifetime;
+        this.spawntime = performance.now();
+    }
+}
+
+class EnergyShock extends Entity {
+    static RADIUS = 150;
+    static MAX_LIFE_TIME = 1500;
+
+    owner = null
+
+    constructor(owner) {
+        super();
+        super.radius = 0;
+        this.owner = owner;
+        this.lifetime = EnergyShock.MAX_LIFE_TIME + performance.now();
     }
 }
 
@@ -25,6 +40,7 @@ class Player extends Entity {
     facingAngle = 0;
     lastShotTime = 0;
     lastShotTakenTime = 0;
+    canBeShot = true;
 
     constructor () {
         super();
@@ -34,6 +50,7 @@ class Player extends Entity {
 
 class Bullet extends Entity {
     static RADIUS = 15;
+    static MAX_LIFE_TIME = 6000;
 
     owner = null
 
@@ -41,7 +58,7 @@ class Bullet extends Entity {
         super();
         super.radius = Bullet.RADIUS;
         this.owner = owner;
-        this.lifetime = 6000 + performance.now();
+        this.lifetime = Bullet.MAX_LIFE_TIME + performance.now();
     }
 }
 
@@ -324,7 +341,7 @@ export class Game {
             let c1 = playerBullet.position;
             let c2 = { x: enemy.position.x + enemy.radius/2 , y: enemy.position.y + enemy.radius/2 };
             if (this.engine.checkCollisionCircles(c1, playerBullet.radius, c2, enemy.radius/4)) {
-                const cooldown = 200;
+                const cooldown = 50;
                 const currentTime = this.engine.getCurrentTime();
                 if (currentTime - enemy.lastShotTakenTime >= cooldown) {
                     enemy.lastShotTakenTime = currentTime;
@@ -370,6 +387,28 @@ export class Game {
         }
     }
 
+    updateEnergyShock = (energyShock) => {
+        const elapsed = performance.now() - energyShock.spawntime;
+        const t = Math.min(elapsed / EnergyShock.MAX_LIFE_TIME, 1);
+        energyShock.radius = EnergyShock.RADIUS * (1 - Math.pow(1 - t, 5));
+        energyShock.position = {
+            x: energyShock.owner.position.x + Player.RADIUS/2,
+            y: energyShock.owner.position.y + Player.RADIUS/2
+        };
+        let enemyBullets =
+            this.engine.state.entities
+                .filter(entity => entity instanceof Bullet)
+                .filter(bullet => bullet.owner instanceof Enemy);
+        enemyBullets.forEach(enemyBullet => {
+            let c1 = enemyBullet.position;
+            let c2 = energyShock.position;
+            if (this.engine.checkCollisionCircles(c1, enemyBullet.radius, c2, energyShock.radius)) {
+                enemyBullet.lifetime = 0;
+                enemyBullet.owner.health -= 1;
+            }
+        });
+    }
+
     updatePlayer = (player) => {
         let enemyBullets =
             this.engine.state.entities
@@ -379,17 +418,20 @@ export class Game {
             let c1 = enemyBullet.position;
             let c2 = { x: player.position.x + player.radius/2 , y: player.position.y + player.radius/2 };
             if (this.engine.checkCollisionCircles(c1, enemyBullet.radius, c2, player.radius/4)) {
-                const cooldown = 500;
+                const cooldown = 1000;
                 const currentTime = this.engine.getCurrentTime();
-                if (currentTime - player.lastShotTakenTime >= cooldown) {
+                if (currentTime - player.lastShotTakenTime >= cooldown && player.canBeShot) {
                     player.lastShotTakenTime = currentTime;
                     player.health -= player.health > 0;
+                    player.canBeShot = false;
                     if (player.health >= 1) {
                         this.engine.playSound("sfx-player_damage");
                     } else {
                         this.engine.playSound("sfx-player_death");
                     }
+                    this.engine.state.entities.push(new EnergyShock(player));
                     enemyBullet.lifetime = 0;
+                    setTimeout(() => player.canBeShot = true, 2500);
                 }
             }
         });
@@ -420,6 +462,7 @@ export class Game {
             if (entity instanceof Enemy) this.updateEnemy(entity);
             if (entity instanceof Player) this.updatePlayer(entity);
             if (entity instanceof Bullet) this.updateBullet(entity);
+            if (entity instanceof EnergyShock) this.updateEnergyShock(entity);
             entity.position.x += entity.velocity.x;
             entity.position.y += entity.velocity.y;
         });
@@ -449,6 +492,10 @@ export class Game {
                     this.engine.drawImage(entity.position.x, entity.position.y, texture, Player.RADIUS, Player.RADIUS, angle + Math.PI/2);
                     break;
                 }
+                case entity instanceof EnergyShock: {
+                    this.engine.drawCircleContour(entity.position.x, entity.position.y, entity.radius, "white", 2);
+                    break;
+                }
                 case entity instanceof Bullet: {
                     if (entity.owner instanceof Player) {
                         this.engine.drawCircle(entity.position.x, entity.position.y, entity.radius - 5, "white");
@@ -475,10 +522,20 @@ export class Game {
         });
     }
 
+    getRandomPosition = (radius) => {
+        return {
+            x: random(radius, window.innerWidth - Follower.RADIUS),
+            y: random(radius, window.innerHeight - Follower.RADIUS)
+        };
+    };
+
     nextLevel = async () => {
         this.state.canChangeLevel = false;
 
         this.engine.state.entities = this.engine.state.entities.filter(entity => entity instanceof Player);
+        let player = this.engine.state.entities[0];
+        player.canBeShot = false;
+        setTimeout(() => player.canBeShot = true, 2000);
 
         if (this.state.level > 1) {
             document.getElementById("hacking-level-complete").style.opacity = 1;
@@ -486,27 +543,19 @@ export class Game {
             document.getElementById("hacking-level-complete").style.opacity = 0;
         }
 
-        let getRandomPosition = (radius) => {
-            return {
-                x: random(radius, window.innerWidth - Follower.RADIUS),
-                y: random(radius, window.innerHeight - Follower.RADIUS)
-            };
-        };
-
         let enemies = Array.from({ length: random(2, 6) }, () => {
-            return new Follower(getRandomPosition(Follower.RADIUS));
+            return new Follower(this.getRandomPosition(Follower.RADIUS));
         });
 
         this.state.trollingFactor = random(0, 4);
 
-        enemies.push(new Core(getRandomPosition(Core.RADIUS), { x: random(1, 10), y: random(1, 10) }));
+        enemies.push(new Core(this.getRandomPosition(Core.RADIUS), { x: random(1, 10), y: random(1, 10) }));
         enemies.forEach(enemy => this.engine.state.entities.push(enemy));
 
         this.state.canChangeLevel = true;
         this.state.level += 1;
     }
 
-    // drawText = (text, posX, posY, fontSize, color) => {
     nextFrame = () => {
         this.engine.clearBackground("#c8c2aa");
 
@@ -547,12 +596,9 @@ export class Game {
 
         if (enemyCount == 1 && this.state.trollingFactor > 0) {
             this.state.trollingFactor -= 1;
-            let enemies = [
-                new Follower({ x: random(Follower.RADIUS, window.innerWidth - Follower.RADIUS), y: random(Follower.RADIUS, window.innerHeight - Follower.RADIUS) }),
-                new Follower({ x: random(Follower.RADIUS, window.innerWidth - Follower.RADIUS), y: random(Follower.RADIUS, window.innerHeight - Follower.RADIUS) }),
-                new Follower({ x: random(Follower.RADIUS, window.innerWidth - Follower.RADIUS), y: random(Follower.RADIUS, window.innerHeight - Follower.RADIUS) }),
-                new Follower({ x: random(Follower.RADIUS, window.innerWidth - Follower.RADIUS), y: random(Follower.RADIUS, window.innerHeight - Follower.RADIUS) })
-            ];
+            let enemies = Array.from({ length: random(2, 6) }, () => {
+                return new Follower(this.getRandomPosition(Follower.RADIUS));
+            });
             enemies.forEach(enemy => this.engine.state.entities.push(enemy));
         }
 
