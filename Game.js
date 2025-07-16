@@ -232,6 +232,8 @@ export class Game {
 
         if (this.state.song) {
             this.unmuffleSong();
+        } else {
+            this.playSong();
         }
     }
 
