@@ -165,25 +165,23 @@ body {
     display: flex;
 }
 
-main {
-    #img-lines, #img-circles {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0.1;
-        z-index: -1;
-    }
+#img-lines, #img-circles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.1;
+    z-index: -1;
+}
 
-    #img-circles {
-        animation: floaty 4s ease-out infinite;
-    }
+#img-circles {
+    animation: floaty 4s ease-out infinite;
+}
 
-    #img-lines {
-        animation: floaty 5.5s ease-in infinite;
-    }
+#img-lines {
+    animation: floaty 5.5s ease-in infinite;
 }
 
 .overlay {
@@ -255,10 +253,7 @@ main {
         flex: 1;
         display: inherit;
         flex-direction: inherit;
-        .tabs {
-            flex: inherit;
-            margin-bottom: 10px;
-        }
+        gap: 10px;
     }
 
     & footer {
@@ -293,6 +288,11 @@ h1 {
 h2 {
     padding: 0;
     margin: 0;
+}
+
+.tabs {
+    flex: inherit;
+    height: fit-content;
 }
 
 .tabbar .v-decoration {
@@ -440,23 +440,23 @@ h2 {
         }
     }
 
-    @media (min-width: 1000px) and (max-width: 1900px) {
+    @media (min-width: 1400px) and (max-width: 1900px) {
         #page-0a-content, #page-1a-content, #page-2a-content, #page-3a-content, #page-4a-content, #page-5a-content,
         #page-0b-content,
         #page-0c-content, #page-1c-content, #page-2c-content {
             overflow: scroll;
-            width: 450px;
-            height: 450px;
+            width: 350px;
+            height: 280px;
         }
     }
 
-    @media (min-width: 600px) and (max-width: 1000px) {
+    @media (min-width: 600px) and (max-width: 1400px) {
         #page-0a-content, #page-1a-content, #page-2a-content, #page-3a-content, #page-4a-content, #page-5a-content,
         #page-0b-content,
         #page-0c-content, #page-1c-content, #page-2c-content {
             overflow: scroll;
             width: 400px;
-            height: 400px;
+            height: 250px;
         }
     }
 }
@@ -514,35 +514,32 @@ h2 {
 
 .description {
     background-color: rgb(var(--accent-color-light));
-    box-shadow: 3px 3px 0px 1px rgb(var(--accent-color-dark));
 
-    @media (min-width: 1900px) { height: 85px; }
-    @media (min-width: 600px) and (max-width: 1900px) { height: 80px; }
+    @media (min-height: 900px) { height: 80px; }
+    @media (max-height: 900px) { height: 40px; }
 
-    & .content {
-        display: flex;
-        align-items: center;
-        height: inherit;
-        background-repeat: no-repeat;
-        padding-left: 4rem;
-        margin-top: 0rem;
-        margin-bottom: 0rem;
-        background-image:
-            linear-gradient(
-                90deg,
-                rgb(var(--accent-color-dark)),
-                rgb(var(--accent-color-dark)) 10px,
-                transparent 10px,
-                transparent 15px,
-                rgb(var(--accent-color-dark)) 15px,
-                rgb(var(--accent-color-dark)) 20px,
-                transparent 20px
-            );
+    display: flex;
+    align-items: center;
+    height: inherit;
+    background-repeat: no-repeat;
+    padding-left: 4rem;
+    margin-top: 0rem;
+    margin-bottom: 0rem;
+    background-image:
+        linear-gradient(
+            90deg,
+            rgb(var(--accent-color-dark)),
+            rgb(var(--accent-color-dark)) 10px,
+            transparent 10px,
+            transparent 15px,
+            rgb(var(--accent-color-dark)) 15px,
+            rgb(var(--accent-color-dark)) 20px,
+            transparent 20px
+        );
 
-        & span {
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
+    & span {
+        opacity: 0;
+        transition: opacity 0.2s;
     }
 }
 
