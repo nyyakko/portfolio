@@ -10,6 +10,5 @@ matá-lo.
 
 esse portfólio como um todo é um grande tributo a esse excelente game.
 
-# [!NOTE]
-
-Aperte ESC para uma surpresa.
+> [NOTE]
+> Aperte ESC para uma surpresa.
