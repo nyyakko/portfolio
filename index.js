@@ -188,12 +188,7 @@ function changePagebar({ currentTarget }) {
 }
 
 async function init() {
-    window.state.audio.context = new AudioContext();
-
-    window.state.audio.buffer["sfx-hover"] = await loadSound("assets/sfx/hover.mp3");
-    window.state.audio.buffer["sfx-click"] = await loadSound("assets/sfx/click.mp3");
-    window.state.audio.buffer["sfx-error"] = await loadSound("assets/sfx/error.mp3");
-    window.state.audio.buffer["sfx-enter"] = await loadSound("assets/sfx/enter.mp3");
+    showDefaultTab();
 
     window.addEventListener("visibilitychange", () => {
         if (document.hidden && window.state.game.state.running) {
@@ -283,6 +278,11 @@ async function init() {
         });
     });
 
-    showDefaultTab();
+    window.state.audio.context = new AudioContext();
+
+    window.state.audio.buffer["sfx-hover"] = await loadSound("assets/sfx/hover.mp3");
+    window.state.audio.buffer["sfx-click"] = await loadSound("assets/sfx/click.mp3");
+    window.state.audio.buffer["sfx-error"] = await loadSound("assets/sfx/error.mp3");
+    window.state.audio.buffer["sfx-enter"] = await loadSound("assets/sfx/enter.mp3");
 }
 
