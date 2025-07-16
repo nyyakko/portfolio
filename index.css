@@ -1,0 +1,934 @@
+root, html, body {
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --background-color: 200, 194, 170;
+
+    --accent-color-dark: 77, 73, 62;
+    --accent-color-light: var(--background-color);
+    --fg-color-dark: var(--accent-color-dark);
+    --fg-color-light: var(--background-color);
+
+    --letter-spacing-s: .1rem;
+    --letter-spacing-m: .2rem;
+    --letter-spacing-l: .5rem;
+    --letter-spacing-xl: .7rem;
+}
+
+body {
+    width: 100%;
+    height: 100vh;
+
+    overflow-x: hidden;
+
+    color: rgb(var(--accent-color-dark));
+    background: rgb(var(--background-color));
+    box-shadow: inset 0 0 150px rgb(var(--accent-color-dark));
+    background-size: 4px 4px;
+    background-image:
+        linear-gradient(90deg, transparent, transparent 3px, rgba(var(--accent-color-dark), .07) 4px),
+        linear-gradient(transparent, transparent 3px, rgba(0,0,0,.07) 4px)
+    ;
+
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--accent-color-dark)) rgb(var(--accent-color-light));
+
+    font-family: "Noto Sans", sans-serif;
+    font-weight: 400;
+    letter-spacing: var(--letter-spacing-s);
+}
+
+@media (min-width: 1900px) {
+body {
+    font-size: 1.2rem;
+}
+}
+
+@media (min-width: 1000px) and (max-width: 1900px) {
+body {
+    font-size: 1.1rem;
+}
+}
+
+@media (min-width: 600px) and (max-width: 1000px) {
+body {
+    font-size: 1rem;
+}
+}
+
+#toast-realm {
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    font-size: inherit;
+}
+
+.toast {
+    visibility: hidden;
+    display: flex;
+    position: fixed;
+    top: 1rem;
+    right: -50rem;
+    flex-direction: column;
+    justify-content: center;
+    background-color: rgb(var(--accent-color-light));
+    box-shadow: 3px 3px 0px 1px rgb(var(--accent-color-dark));
+
+    & .toast-title {
+        font-size: inherit;
+        margin: 0;
+        padding: 8px;
+        font-weight: inherit;
+        letter-spacing: inherit;
+        color: rgb(var(--fg-color-light));
+        background-color: rgb(var(--accent-color-dark));
+
+    }
+
+    & .toast-title + div { padding: 15px; }
+
+    & .toast-content {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        & section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+}
+
+.toast.show {
+    right: 1rem;
+    visibility: visible;
+    animation: fadein 0.5s;
+}
+
+@keyframes fadein {
+    from {
+        top: 1rem;
+        right: -5rem;
+        opacity: 0;
+    }
+    to {
+        top: 1rem;
+        right: 1rem;
+        opacity: 1;
+    }
+}
+
+#popup-realm {
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    font-size: inherit;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    flex-direction: column;
+    justify-content: center;
+    background-color: rgb(var(--accent-color-light));
+    box-shadow: 3px 3px 0px 1px rgb(var(--accent-color-dark));
+
+    & .popup-title {
+        font-size: inherit;
+        margin: 0;
+        padding: 8px;
+        font-weight: inherit;
+        letter-spacing: inherit;
+        color: rgb(var(--fg-color-light));
+        background-color: rgb(var(--accent-color-dark));
+    }
+
+    & .popup-title + div {
+        padding: 15px;
+    }
+
+    & .popup-content {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        color: rgb(var(--fg-color-dark));
+
+        & section {
+            text-shadow: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        & footer {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+        }
+    }
+}
+
+.popup.show {
+    display: flex;
+}
+
+#intro {
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: rgb(var(--fg-color-light));
+    letter-spacing: var(--letter-spacing-s);
+    text-shadow: .3rem .3rem 0 rgba(var(--accent-color-dark), .3);
+    background-color: black;
+    opacity: 0;
+
+    transition: opacity 0.2s;
+
+    & .content {
+        opacity: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: left;
+        transition: opacity 0.2s;
+    }
+}
+
+main {
+    #img-lines, #img-circles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.1;
+        z-index: -1;
+    }
+
+    #img-circles {
+        animation: floaty 4s ease-out infinite;
+    }
+
+    #img-lines {
+        animation: floaty 5.5s ease-in infinite;
+    }
+}
+
+.overlay {
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    font-size: 3rem;
+    text-transform: uppercase;
+    font-weight: 400;
+    letter-spacing: var(--letter-spacing-xl);
+    text-shadow: .3rem .3rem 0 rgba(var(--accent-color-dark), .3);
+    background-color: rgba(0,0,0, .3);
+    z-index: 999;
+    opacity: 0;
+
+    transition: opacity 0.2s;
+
+    &::before, &::after {
+        position: absolute;
+        content: "";
+        background-color: rgba(0,0,0, .5);
+        width: 100%;
+        height: 15%;
+    }
+
+    & div {
+        color: rgb(var(--fg-color-light));
+    }
+
+    &::before { top: 0; }
+    &::after { bottom: 0; }
+}
+
+#system-interference {
+    & div::after {
+        content: "_";
+        animation: blink-cursor .75s step-end infinite;
+    }
+}
+
+@keyframes blink-cursor {
+    from, to { visibility: hidden; }
+    50% { visibility: visible; }
+}
+
+canvas {
+    display: none;
+}
+
+@keyframes floaty {
+    0% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(10px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+main {
+    width: inherit;
+    height: inherit;
+    display: flex;
+    flex-direction: column;
+
+    & .container {
+        flex: 1;
+        display: inherit;
+        flex-direction: inherit;
+        .tabs {
+            flex: inherit;
+            margin-bottom: 10px;
+        }
+    }
+
+    & footer {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+}
+
+h1 {
+    margin: 0;
+    text-transform: uppercase;
+    font-weight: 400;
+    letter-spacing: var(--letter-spacing-xl);
+    text-shadow: .3rem .3rem 0 rgba(var(--accent-color-dark), .3);
+
+    span {
+        margin-right: -.7rem;
+    }
+
+    small {
+        &::before {
+            content: "–";
+        }
+        font-weight: 500;
+        text-transform: none;
+        text-shadow: none;
+        letter-spacing: var(--letter-spacing-s);
+    }
+}
+
+h2 {
+    padding: 0;
+    margin: 0;
+}
+
+.tabbar .v-decoration {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 0rem;
+    background-size: 100% 69%;
+    background-repeat: no-repeat;
+}
+
+.tab {
+    height: 100%;
+
+    & .tab-container {
+        height: inherit;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+}
+
+.tab-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.pagesbar {
+    width: 35%;
+    display: flex;
+}
+
+.pagebar {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 15px;
+
+    & .v-decoration {
+        gap: 15px;
+        height: inherit;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+}
+
+.page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: rgb(var(--accent-color-light));
+
+    & .page-title {
+        font-size: inherit;
+        margin: 0;
+        padding: 8px;
+        font-weight: inherit;
+        letter-spacing: inherit;
+        color: rgb(var(--fg-color-light));
+        background-color: rgb(var(--accent-color-dark));
+    }
+
+    & .page-title + div {
+        padding: 15px;
+    }
+
+    & .page-content {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        & section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        & section div {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        & footer {
+            height: 100%;
+            justify-content: center;
+            text-align: center;
+        }
+    }
+
+    @media (min-width: 1900px) {
+    #page-0a-content, #page-0b-content, #page-0c-content {
+        width: 500px;
+        height: 450px;
+    }
+
+    #page-1a-content, #page-2a-content, #page-3a-content, #page-4a-content, #page-4a-content,
+    #page-1b-content, #page-2b-content,
+    #page-1c-content, #page-2c-content {
+        overflow: scroll;
+        width: 600px;
+        height: 450px;
+    }
+    }
+
+    @media (min-width: 1000px) and (max-width: 1900px) {
+    #page-0a-content, #page-0b-content, #page-0c-content {
+        width: 450px;
+        height: 250px;
+    }
+
+    #page-1a-content, #page-2a-content, #page-3a-content, #page-4a-content, #page-4a-content,
+    #page-1b-content, #page-2b-content,
+    #page-1c-content, #page-2c-content {
+        overflow: scroll;
+        width: 500px;
+        height: 250px;
+    }
+    }
+
+    @media (min-width: 600px) and (max-width: 1000px) {
+    #page-0a-content, #page-0b-content, #page-0c-content {
+        width: 300px;
+        height: 250px;
+    }
+
+    #page-1a-content, #page-2a-content, #page-3a-content, #page-4a-content, #page-4a-content,
+    #page-1b-content, #page-2b-content
+    #page-1c-content, #page-2c-content {
+        overflow: scroll;
+        width: 300px;
+        height: 250px;
+    }
+    }
+}
+
+.page.letter .page-title {
+    font-size: inherit;
+    margin: 0;
+    padding: 8px;
+    padding-left: 40px;
+    position: relative;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    color: rgb(var(--fg-color-dark));
+    background-color: rgba(var(--accent-color-dark), .2);
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        width: 16px;
+        height: 16px;
+        background-color: rgb(var(--accent-color-dark));
+        transform: translateY(-50%);
+    }
+}
+
+.skillsbar .bar {
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(105, 102, 95);
+
+    & .skill {
+        transform: scale(1);
+        transition: 0.2s;
+    }
+
+    & .skill.highlighted {
+        transform: scale(1.2);
+        transform-origin: center;
+    }
+
+    & .skill.frontend {
+        width: 100%;
+        background-color: rgb(229, 218, 172);
+    }
+
+    & .skill.backend {
+        width: 100%;
+        background-color: rgb(184, 152, 127);
+    }
+
+    #skill-0 { height: 20%; }
+    #skill-1 { height: 5%; }
+    #skill-2 { height: 10%; }
+    #skill-3 { height: 8%; }
+    #skill-4 { height: 10%; }
+    #skill-5 { height: 15%; }
+    #skill-6 { height: 6%; }
+}
+
+@media (min-width: 1900px) {
+.skillsbar .bar {
+    width: 250px;
+    height: 500px;
+}
+}
+
+@media (min-width: 1000px) and (max-width: 1900px) {
+.skillsbar .bar {
+    width: 150px;
+    height: 300px;
+}
+}
+
+@media (min-width: 600px) and (max-width: 1000px) {
+.skillsbar .bar {
+    width: 190px;
+    height: 300px;
+}
+}
+
+.list {
+    box-shadow: 3px 3px 0px 1px rgb(var(--accent-color-dark));
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background: rgb(var(--accent-color-light));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+@media (min-width: 1900px) {
+.description {
+    height: 75px;
+}
+}
+
+@media (min-width: 1000px) and (max-width: 1900px) {
+.description {
+    height: 55px;
+}
+}
+
+@media (min-width: 600px) and (max-width: 1000px) {
+.description {
+    height: 45px;
+}
+}
+
+.description {
+    background-color: rgb(var(--accent-color-light));
+    box-shadow: 3px 3px 0px 1px rgb(var(--accent-color-dark));
+
+    & .content {
+        display: flex;
+        align-items: center;
+        height: inherit;
+        background-repeat: no-repeat;
+        padding-left: 4rem;
+        margin-top: 0rem;
+        margin-bottom: 0rem;
+        background-image:
+            linear-gradient(
+                90deg,
+                rgb(var(--accent-color-dark)),
+                rgb(var(--accent-color-dark)) 10px,
+                transparent 10px,
+                transparent 15px,
+                rgb(var(--accent-color-dark)) 15px,
+                rgb(var(--accent-color-dark)) 20px,
+                transparent 20px
+            );
+
+        & span {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+    }
+}
+
+@media (min-width: 1900px) {
+.padded { padding: 0 8rem; }
+}
+
+@media (min-width: 1000px) and (max-width: 1900px) {
+.padded { padding: 0 6rem; }
+}
+
+@media (min-width: 600px) and (max-width: 1000px) {
+.padded { padding: 0 3rem; }
+}
+
+.v-decoration {
+    padding-left: 4rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    background-image:
+        linear-gradient(
+            90deg,
+            rgba(var(--accent-color-dark), .2),
+            rgba(var(--accent-color-dark), .2) 10px,
+            transparent 10px,
+            transparent 15px,
+            rgba(var(--accent-color-dark), .2) 15px,
+            rgba(var(--accent-color-dark), .2) 20px,
+            transparent 20px
+        );
+}
+
+.h-decoration {
+    border-top: 2px solid rgb(var(--accent-color-dark));
+
+    & .inner {
+        border-top: none;
+        height: 40px;
+
+        background-repeat: repeat-x;
+        background-size:
+            50px 3px,
+            50px 1px, 50px 1px, 50px 1px, 50px 1px,
+            50px 1px, 50px 1px, 50px 1px, 50px 1px;
+        background-position:
+            0 0,
+            22px 4px, 22px 5px, 22px 6px, 22px 7px,
+            28px 12px, 28px 13px, 28px 14px, 28px 15px;
+
+        background-image:
+            linear-gradient(90deg,
+                rgb(var(--accent-color-dark)),
+                rgb(var(--accent-color-dark)) 10px,
+                transparent 10px
+            ),
+
+            linear-gradient(90deg,
+                rgba(var(--accent-color-dark), .4),
+                rgba(var(--accent-color-dark), .4) 1px,
+                rgba(var(--accent-color-dark), .8) 1px,
+                rgba(var(--accent-color-dark), .8) 2px,
+                rgba(var(--accent-color-dark), .9) 2px,
+                rgba(var(--accent-color-dark), .9) 3px,
+                rgba(var(--accent-color-dark), .4) 3px,
+                rgba(var(--accent-color-dark), .4) 4px,
+                transparent 4px,
+                transparent 12px,
+                rgba(var(--accent-color-dark), .4) 12px,
+                rgba(var(--accent-color-dark), .4) 13px,
+                rgba(var(--accent-color-dark), .8) 13px,
+                rgba(var(--accent-color-dark), .8) 14px,
+                rgba(var(--accent-color-dark), .9) 14px,
+                rgba(var(--accent-color-dark), .9) 15px,
+                rgba(var(--accent-color-dark), .4) 15px,
+                rgba(var(--accent-color-dark), .4) 16px,
+                transparent 16px
+            ),
+            linear-gradient(90deg,
+                rgba(var(--accent-color-dark), .9),
+                rgba(var(--accent-color-dark), .9) 1px,
+                rgba(var(--accent-color-dark), 1) 1px,
+                rgba(var(--accent-color-dark), 1) 2px,
+                rgba(var(--accent-color-dark), 1) 2px,
+                rgba(var(--accent-color-dark), 1) 3px,
+                rgba(var(--accent-color-dark), .9) 3px,
+                rgba(var(--accent-color-dark), .9) 4px,
+                transparent 4px, transparent 12px,
+                rgba(var(--accent-color-dark), .9) 12px,
+                rgba(var(--accent-color-dark), .9) 13px,
+                rgba(var(--accent-color-dark), 1) 13px,
+                rgba(var(--accent-color-dark), 1) 14px,
+                rgba(var(--accent-color-dark), 1) 14px,
+                rgba(var(--accent-color-dark), 1) 15px,
+                rgba(var(--accent-color-dark), .9) 15px,
+                rgba(var(--accent-color-dark), .9) 16px,
+                transparent 16px
+            ),
+            linear-gradient(90deg,
+                rgba(var(--accent-color-dark), .9),
+                rgba(var(--accent-color-dark), .9) 1px,
+                rgba(var(--accent-color-dark), 1) 1px,
+                rgba(var(--accent-color-dark), 1) 2px,
+                rgba(var(--accent-color-dark), 1) 2px,
+                rgba(var(--accent-color-dark), 1) 3px,
+                rgba(var(--accent-color-dark), .9) 3px,
+                rgba(var(--accent-color-dark), .9) 4px,
+                transparent 4px, transparent 12px,
+                rgba(var(--accent-color-dark), .9) 12px,
+                rgba(var(--accent-color-dark), .9) 13px,
+                rgba(var(--accent-color-dark), 1) 13px,
+                rgba(var(--accent-color-dark), 1) 14px,
+                rgba(var(--accent-color-dark), 1) 14px,
+                rgba(var(--accent-color-dark), 1) 15px,
+                rgba(var(--accent-color-dark), .9) 15px,
+                rgba(var(--accent-color-dark), .9) 16px,
+                transparent 16px
+            ),
+            linear-gradient(90deg,
+                rgba(var(--accent-color-dark), .4),
+                rgba(var(--accent-color-dark), .4) 1px,
+                rgba(var(--accent-color-dark), .8) 1px,
+                rgba(var(--accent-color-dark), .8) 2px,
+                rgba(var(--accent-color-dark), .9) 2px,
+                rgba(var(--accent-color-dark), .9) 3px,
+                rgba(var(--accent-color-dark), .4) 3px,
+                rgba(var(--accent-color-dark), .4) 4px,
+                transparent 4px, transparent 12px,
+                rgba(var(--accent-color-dark), .4) 12px,
+                rgba(var(--accent-color-dark), .4) 13px,
+                rgba(var(--accent-color-dark), .8) 13px,
+                rgba(var(--accent-color-dark), .8) 14px,
+                rgba(var(--accent-color-dark), .9) 14px,
+                rgba(var(--accent-color-dark), .9) 15px,
+                rgba(var(--accent-color-dark), .4) 15px,
+                rgba(var(--accent-color-dark), .4) 16px,
+                transparent 16px
+            ),
+
+            linear-gradient(90deg,
+                rgba(var(--accent-color-dark), .4),
+                rgba(var(--accent-color-dark), .4) 1px,
+                rgba(var(--accent-color-dark), .8) 1px,
+                rgba(var(--accent-color-dark), .8) 2px,
+                rgba(var(--accent-color-dark), .9) 2px,
+                rgba(var(--accent-color-dark), .9) 3px,
+                rgba(var(--accent-color-dark), .4) 3px,
+                rgba(var(--accent-color-dark), .4) 4px,
+                transparent 4px
+            ),
+            linear-gradient(90deg,
+                rgba(var(--accent-color-dark), .9),
+                rgba(var(--accent-color-dark), .9) 1px,
+                rgba(var(--accent-color-dark), 1) 1px,
+                rgba(var(--accent-color-dark), 1) 2px,
+                rgba(var(--accent-color-dark), 1) 2px,
+                rgba(var(--accent-color-dark), 1) 3px,
+                rgba(var(--accent-color-dark), .9) 3px,
+                rgba(var(--accent-color-dark), .9) 4px,
+                transparent 4px
+            ),
+            linear-gradient(90deg,
+                rgba(var(--accent-color-dark), .9),
+                rgba(var(--accent-color-dark), .9) 1px,
+                rgba(var(--accent-color-dark), 1) 1px,
+                rgba(var(--accent-color-dark), 1) 2px,
+                rgba(var(--accent-color-dark), 1) 2px,
+                rgba(var(--accent-color-dark), 1) 3px,
+                rgba(var(--accent-color-dark), .9) 3px,
+                rgba(var(--accent-color-dark), .9) 4px,
+                transparent 4px
+            ),
+            linear-gradient(90deg,
+                rgba(var(--accent-color-dark), .4),
+                rgba(var(--accent-color-dark), .4) 1px,
+                rgba(var(--accent-color-dark), .8) 1px,
+                rgba(var(--accent-color-dark), .8) 2px,
+                rgba(var(--accent-color-dark), .9) 2px,
+                rgba(var(--accent-color-dark), .9) 3px,
+                rgba(var(--accent-color-dark), .4) 3px,
+                rgba(var(--accent-color-dark), .4) 4px,
+                transparent 4px
+            );
+    }
+}
+
+.button {
+    cursor: pointer;
+    font: inherit;
+    border: none;
+    padding: .4rem 1rem;
+    color: rgb(var(--fg-color-dark));
+    box-sizing: content-box;
+    position: relative;
+    letter-spacing: var(--letter-spacing-m);
+    text-align: left;
+    padding-left: 40px;
+    background:
+        linear-gradient(to left,
+            rgba(var(--accent-color-dark), .2) 50%,
+            rgb(var(--accent-color-dark)) 50%) right
+        ;
+    background-size: 200%;
+    transition: background .2s cubic-bezier(0.22, 1, 0.36, 1);
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        width: 16px;
+        height: 16px;
+        background-color: rgb(var(--accent-color-dark));
+        transform: translateY(-50%);
+        transform-origin: 50% 50%;
+        transition: transform 0.2s, clip-path 0.2s;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 0%;
+        width: 100%;
+        height: 0%;
+        background-color: rgb(var(--accent-color-dark));
+        transition: .1s;
+    }
+
+    &:hover {
+        color: rgb(var(--fg-color-light));
+        background-position: left;
+
+        &::before {
+            transform: translateY(-50%) rotate(45deg);
+            background-color: rgb(var(--accent-color-light));
+        }
+    }
+}
+
+.button.active {
+    background-position: left;
+    color: rgb(var(--fg-color-light));
+    border-color: rgb(var(--accent-color-dark));
+
+    &::before {
+        transform: translateY(-50%) rotate(-90deg);
+        background-color: rgb(var(--accent-color-light));
+    }
+}
+
+.button.light {
+    background:
+        linear-gradient(to left,
+            rgb(var(--accent-color-light)) 50%,
+            rgb(var(--accent-color-dark)) 50%) right
+        ;
+    background-size: 200%;
+
+    &:hover {
+        color: rgb(var(--fg-color-light));
+        background-position: left;
+    }
+}
+
+.button.light.active {
+    background-position: left;
+    color: rgb(var(--fg-color-light));
+    border-color: rgb(var(--accent-color-dark));
+
+    &::before {
+        transform: translateY(-50%) rotate(-90deg);
+        background-color: rgb(var(--accent-color-light));
+    }
+}
+
+.page-button {
+    transition:
+        background .2s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow .2s
+    ;
+
+    &:hover {
+        box-shadow: 2px 2px 2px 1px rgb(var(--accent-color-dark));
+    }
+}
+
+.tab-button {
+    width: 20%;
+    margin-bottom: 1rem;
+
+    &.active::after {
+        height: 50%;
+    }
+}
+
+.separator {
+    border-top: 2px solid rgba(var(--accent-color-dark), .3);
+}
+
+.written {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: writing 1.5s steps(40, end)
+}
+
+@keyframes writing {
+    from { width: 0; }
+    to { width: 100%; }
+}
