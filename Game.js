@@ -254,11 +254,6 @@ export class Game {
     }
 
     playSong = async () => {
-        if (this.state.song != null) {
-            this.unmuffleSong();
-            return;
-        }
-
         const SONGS = [
             { name: "a_beautiful_song-8bit" },
             { name: "amusement_park-8bit" },
