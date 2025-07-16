@@ -165,36 +165,6 @@ body {
     display: flex;
 }
 
-#intro {
-    pointer-events: none;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    font-size: 1.2rem;
-    font-weight: 400;
-    color: rgb(var(--fg-color-light));
-    letter-spacing: var(--letter-spacing-s);
-    text-shadow: .3rem .3rem 0 rgba(var(--accent-color-dark), .3);
-    background-color: black;
-    opacity: 0;
-
-    transition: opacity 0.2s;
-
-    & .content {
-        opacity: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        text-align: left;
-        transition: opacity 0.2s;
-    }
-}
-
 main {
     #img-lines, #img-circles {
         position: absolute;
