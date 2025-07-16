@@ -1,6 +1,6 @@
 # Portfólio.
 
-Tudo que vive é destinado a morrer. Estamos perpétuamente encurralados, presos\
+Tudo que vive está destinado a morrer. Estamos perpétuamente encurralados, presos\
 numa espiral que oscila entre a vida e a morte. Seria isso uma maldição? Ou\
 algum tipo de punição? Constantemente penso no Deus que nos abençoou com este\
 quebra-cabeça enigmático, e me pergunto se em algum momento teremos a chance de\
