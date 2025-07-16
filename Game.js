@@ -644,7 +644,7 @@ export class Game {
 
         if (enemyCount == 1 && this.state.trollingFactor > 0) {
             this.state.trollingFactor -= 1;
-            let enemies = Array.from({ length: random(2, 6) }, () => {
+            let enemies = Array.from({ length: random(1, 3) }, () => {
                 return new Follower(this.getRandomPosition(Follower.RADIUS));
             });
             enemies.forEach(enemy => this.engine.state.entities.push(enemy));
