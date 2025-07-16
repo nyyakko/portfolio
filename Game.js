@@ -2,6 +2,13 @@ import { LibEngine } from "./LibEngine.js";
 
 const MAX_LEVEL_COUNT = 20;
 
+/*
+FIXME:
+    performance disso é questionável pelo fato de eu estar
+    realizando todos os algoritmos de maneira linear.
+    Functiona por enquanto, porém eventualmente seria bom dar uma arrumada.
+*/
+
 class Entity {
     constructor(
         position = { x: 0, y: 0 },
@@ -16,6 +23,20 @@ class Entity {
         this.health = health;
         this.lifetime = lifetime;
         this.spawntime = performance.now();
+    }
+}
+
+class EnergyShield extends Entity {
+    static RADIUS = 80;
+    static MAX_LIFE_TIME = 1500;
+
+    owner = null
+
+    constructor(owner) {
+        super();
+        super.radius = 0;
+        this.owner = owner;
+        this.lifetime = EnergyShock.MAX_LIFE_TIME + performance.now();
     }
 }
 
@@ -409,6 +430,27 @@ export class Game {
         });
     }
 
+    updateEnergyShield = (energyShield) => {
+        const elapsed = performance.now() - energyShield.spawntime;
+        const t = Math.min(elapsed / EnergyShield.MAX_LIFE_TIME, 1);
+        energyShield.radius = EnergyShield.RADIUS * (1 - Math.pow(1 - t, 5));
+        energyShield.position = {
+            x: energyShield.owner.position.x + Player.RADIUS/2,
+            y: energyShield.owner.position.y + Player.RADIUS/2
+        };
+        let enemyBullets =
+            this.engine.state.entities
+                .filter(entity => entity instanceof Bullet)
+                .filter(bullet => bullet.owner instanceof Enemy);
+        enemyBullets.forEach(enemyBullet => {
+            let c1 = enemyBullet.position;
+            let c2 = energyShield.position;
+            if (this.engine.checkCollisionCircles(c1, enemyBullet.radius, c2, energyShield.radius)) {
+                enemyBullet.lifetime = 0;
+            }
+        });
+    }
+
     updatePlayer = (player) => {
         let enemyBullets =
             this.engine.state.entities
@@ -430,6 +472,7 @@ export class Game {
                         this.engine.playSound("sfx-player_death");
                     }
                     this.engine.state.entities.push(new EnergyShock(player));
+                    this.engine.state.entities.push(new EnergyShield(player));
                     enemyBullet.lifetime = 0;
                     setTimeout(() => player.canBeShot = true, 2500);
                 }
@@ -463,6 +506,7 @@ export class Game {
             if (entity instanceof Player) this.updatePlayer(entity);
             if (entity instanceof Bullet) this.updateBullet(entity);
             if (entity instanceof EnergyShock) this.updateEnergyShock(entity);
+            if (entity instanceof EnergyShield) this.updateEnergyShield(entity);
             entity.position.x += entity.velocity.x;
             entity.position.y += entity.velocity.y;
         });
@@ -494,6 +538,10 @@ export class Game {
                 }
                 case entity instanceof EnergyShock: {
                     this.engine.drawCircleContour(entity.position.x, entity.position.y, entity.radius, "white", 2);
+                    break;
+                }
+                case entity instanceof EnergyShield: {
+                    this.engine.drawCircleContour(entity.position.x, entity.position.y, entity.radius, "#4d493e", 2);
                     break;
                 }
                 case entity instanceof Bullet: {
