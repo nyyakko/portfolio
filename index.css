@@ -840,7 +840,8 @@ h2 {
 .written {
     overflow: hidden;
     white-space: nowrap;
-    animation: writing 1.5s steps(40, end)
+    @media (min-width: 1900px) { animation: writing 1.5s steps(40, end) }
+    @media (min-width: 600px) and (max-width: 1900px) { animation: writing 1s steps(40, end) }
 }
 
 @keyframes writing {
