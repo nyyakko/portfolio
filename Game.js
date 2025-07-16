@@ -132,7 +132,7 @@ export class Game {
         running: false,
         song: null,
         canChangeLevel: true,
-        level: 1,
+        level: 0,
         score: 0,
         trollingFactor: 0,
         entities: []
@@ -213,11 +213,11 @@ export class Game {
             ...this.state,
             started: false,
             running: false,
-            level: 1,
-            score: 0
+            level: 0,
+            score: 0,
+            entities: []
         };
 
-        this.state.entities = [];
         this.engine.clearEvents();
     }
 
@@ -580,6 +580,7 @@ export class Game {
 
     nextLevel = async () => {
         this.state.canChangeLevel = false;
+        this.state.level += 1;
 
         this.state.entities = this.state.entities.filter(entity => entity instanceof Player);
         let player = this.state.entities[0];
@@ -602,7 +603,6 @@ export class Game {
         enemies.forEach(enemy => this.state.entities.push(enemy));
 
         this.state.canChangeLevel = true;
-        this.state.level += 1;
     }
 
     nextFrame = () => {
@@ -611,7 +611,7 @@ export class Game {
         for (let x = 0; x <= window.innerWidth; x += 50) this.engine.drawLine(x, 0, x, window.innerHeight, "#ccc", 1);
         for (let y = 0; y <= window.innerHeight; y += 50) this.engine.drawLine(0, y, window.innerWidth, y, "#ccc", 1);
 
-        this.engine.drawText(`Level: ${this.state.level-1} / ${MAX_LEVEL_COUNT}`, 32 + 16, 32 + 16, 32, "#4d493e");
+        this.engine.drawText(`Level: ${this.state.level} / ${MAX_LEVEL_COUNT}`, 32 + 16, 32 + 16, 32, "#4d493e");
         this.engine.drawText(`Score: ${this.state.score}`, 32 + 16, 32 + 48, 32, "#4d493e");
 
         this.updateEntities();
