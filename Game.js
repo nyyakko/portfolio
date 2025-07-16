@@ -131,10 +131,11 @@ export class Game {
         started: false,
         running: false,
         song: null,
-        level: 1,
         canChangeLevel: true,
+        level: 1,
         score: 0,
-        trollingFactor: 0
+        trollingFactor: 0,
+        entities: []
     }
 
     constructor () {
@@ -161,7 +162,7 @@ export class Game {
         this.state.started = true;
         this.state.running = true;
 
-        this.engine.state.entities.push(this.makePlayer());
+        this.state.entities.push(this.makePlayer());
 
         this.playSong();
 
@@ -216,7 +217,7 @@ export class Game {
             score: 0
         };
 
-        this.engine.state.entities = [];
+        this.state.entities = [];
         this.engine.clearEvents();
     }
 
@@ -236,7 +237,7 @@ export class Game {
 
     pause = ({ showMenu } = { showMenu: true }) => {
         this.state.running = false;
-        this.engine.state.entities[0].velocity = { x: 0, y: 0 };
+        this.state.entities[0].velocity = { x: 0, y: 0 };
 
         this.engine.clearEvents();
 
@@ -308,7 +309,7 @@ export class Game {
     }
 
     removeDeadEntities = () => {
-        this.engine.state.entities = this.engine.state.entities.filter(entity =>
+        this.state.entities = this.state.entities.filter(entity =>
             (entity.lifetime == null && entity.health >= 1) || entity.lifetime > this.engine.getCurrentTime()
         );
     }
@@ -344,18 +345,18 @@ export class Game {
             y: BULLET_VELOCITY * Math.sin(angle)
         };
 
-        this.engine.state.entities.push(bullet);
+        this.state.entities.push(bullet);
     }
 
     updateEnemy = (enemy) => {
-        let player = this.engine.state.entities[0];
+        let player = this.state.entities[0];
 
         let playerBullets =
-            this.engine.state.entities
+            this.state.entities
                 .filter(entity => entity instanceof Bullet)
                 .filter(bullet => bullet.owner instanceof Player);
         playerBullets.forEach(playerBullet => {
-            if (enemy instanceof Core && this.engine.state.entities.filter(entity => entity instanceof Enemy).length > 1) {
+            if (enemy instanceof Core && this.state.entities.filter(entity => entity instanceof Enemy).length > 1) {
                 return;
             }
 
@@ -417,7 +418,7 @@ export class Game {
             y: energyShock.owner.position.y + Player.RADIUS/2
         };
         let enemyBullets =
-            this.engine.state.entities
+            this.state.entities
                 .filter(entity => entity instanceof Bullet)
                 .filter(bullet => bullet.owner instanceof Enemy);
         enemyBullets.forEach(enemyBullet => {
@@ -439,7 +440,7 @@ export class Game {
             y: energyShield.owner.position.y + Player.RADIUS/2
         };
         let enemyBullets =
-            this.engine.state.entities
+            this.state.entities
                 .filter(entity => entity instanceof Bullet)
                 .filter(bullet => bullet.owner instanceof Enemy);
         enemyBullets.forEach(enemyBullet => {
@@ -453,7 +454,7 @@ export class Game {
 
     updatePlayer = (player) => {
         let enemyBullets =
-            this.engine.state.entities
+            this.state.entities
                 .filter(entity => entity instanceof Bullet)
                 .filter(bullet => bullet.owner instanceof Enemy);
         enemyBullets.forEach(enemyBullet => {
@@ -471,8 +472,8 @@ export class Game {
                     } else {
                         this.engine.playSound("sfx-player_death");
                     }
-                    this.engine.state.entities.push(new EnergyShock(player));
-                    this.engine.state.entities.push(new EnergyShield(player));
+                    this.state.entities.push(new EnergyShock(player));
+                    this.state.entities.push(new EnergyShield(player));
                     enemyBullet.lifetime = 0;
                     setTimeout(() => player.canBeShot = true, 2500);
                 }
@@ -482,7 +483,7 @@ export class Game {
 
     updateBullet = (bullet) => {
         let bullets =
-            this.engine.state.entities
+            this.state.entities
                 .filter(entity => entity instanceof Bullet)
                 .filter(neighboor => bullet != neighboor);
         bullets.forEach(neighboor => {
@@ -501,7 +502,7 @@ export class Game {
 
     updateEntities = () => {
         this.removeDeadEntities();
-        this.engine.state.entities.forEach(entity => {
+        this.state.entities.forEach(entity => {
             if (entity instanceof Enemy) this.updateEnemy(entity);
             if (entity instanceof Player) this.updatePlayer(entity);
             if (entity instanceof Bullet) this.updateBullet(entity);
@@ -514,7 +515,7 @@ export class Game {
 
     drawEntities = () => {
         const { x: mouseX, y: mouseY } = this.engine.getMousePosition();
-        this.engine.state.entities.forEach(entity => {
+        this.state.entities.forEach(entity => {
             switch (true) {
                 case entity instanceof Player: {
                     const dx = mouseX - (entity.position.x + entity.radius/2);
@@ -580,8 +581,8 @@ export class Game {
     nextLevel = async () => {
         this.state.canChangeLevel = false;
 
-        this.engine.state.entities = this.engine.state.entities.filter(entity => entity instanceof Player);
-        let player = this.engine.state.entities[0];
+        this.state.entities = this.state.entities.filter(entity => entity instanceof Player);
+        let player = this.state.entities[0];
         player.canBeShot = false;
         setTimeout(() => player.canBeShot = true, 2000);
 
@@ -598,7 +599,7 @@ export class Game {
         this.state.trollingFactor = random(0, 4);
 
         enemies.push(new Core(this.getRandomPosition(Core.RADIUS), { x: random(1, 10), y: random(1, 10) }));
-        enemies.forEach(enemy => this.engine.state.entities.push(enemy));
+        enemies.forEach(enemy => this.state.entities.push(enemy));
 
         this.state.canChangeLevel = true;
         this.state.level += 1;
@@ -616,7 +617,7 @@ export class Game {
         this.updateEntities();
         this.drawEntities();
 
-        let player = this.engine.state.entities[0];
+        let player = this.state.entities[0];
 
         if (this.engine.isKeyPressed(LibEngine.KEY_W) || this.engine.isKeyPressed(LibEngine.KEY_S)) {
             player.velocity.y = this.engine.isKeyPressed(LibEngine.KEY_W) ? -Player.MAX_VELOCITY : Player.MAX_VELOCITY;
@@ -639,7 +640,7 @@ export class Game {
             }
         }
 
-        let enemyCount = this.engine.state.entities.filter(entity => entity instanceof Enemy).length;
+        let enemyCount = this.state.entities.filter(entity => entity instanceof Enemy).length;
         let hasEnemies = enemyCount >= 1;
 
         if (enemyCount == 1 && this.state.trollingFactor > 0) {
@@ -647,7 +648,7 @@ export class Game {
             let enemies = Array.from({ length: random(1, 3) }, () => {
                 return new Follower(this.getRandomPosition(Follower.RADIUS));
             });
-            enemies.forEach(enemy => this.engine.state.entities.push(enemy));
+            enemies.forEach(enemy => this.state.entities.push(enemy));
         }
 
         if (!hasEnemies && this.state.canChangeLevel) {

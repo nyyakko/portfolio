@@ -11,10 +11,6 @@ export class LibEngine {
         },
     }
 
-    state = {
-        entities: [],
-    }
-
     constructor() {
         this.context.canvas = document.getElementById("canvas");
         this.context.canvasContext = this.context.canvas.getContext("2d");
