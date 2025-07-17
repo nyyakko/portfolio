@@ -104,67 +104,6 @@ body {
     }
 }
 
-#popup-realm {
-    pointer-events: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: flex;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    z-index: 1;
-    font-size: inherit;
-}
-
-.popup {
-    display: none;
-    position: fixed;
-    flex-direction: column;
-    justify-content: center;
-    background-color: rgb(var(--accent-color-light));
-    box-shadow: 3px 3px 0px 1px rgb(var(--accent-color-dark));
-
-    & .popup-title {
-        font-size: inherit;
-        margin: 0;
-        padding: 8px;
-        font-weight: inherit;
-        letter-spacing: inherit;
-        color: rgb(var(--fg-color-light));
-        background-color: rgb(var(--accent-color-dark));
-    }
-
-    & .popup-title + div {
-        padding: 15px;
-    }
-
-    & .popup-content {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        color: rgb(var(--fg-color-dark));
-
-        & section {
-            text-shadow: none;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        & footer {
-            display: flex;
-            flex-direction: row;
-            gap: 10px;
-        }
-    }
-}
-
-.popup.show {
-    display: flex;
-}
-
 #img-yohra {
     position: fixed;
     top: 50%;
@@ -200,6 +139,12 @@ body {
 
 #img-lines {
     animation: floaty 5.5s ease-in infinite;
+}
+
+@keyframes floaty {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(10px); }
+    100% { transform: translateX(0); }
 }
 
 .overlay {
@@ -255,12 +200,6 @@ canvas {
     display: none;
 }
 
-@keyframes floaty {
-    0% { transform: translateX(0); }
-    50% { transform: translateX(10px); }
-    100% { transform: translateX(0); }
-}
-
 main {
     width: inherit;
     height: inherit;
@@ -309,17 +248,17 @@ h2 {
     margin: 0;
 }
 
-.tabs {
-    flex: inherit;
-    height: fit-content;
-}
-
 .tabbar .v-decoration {
     display: flex;
     gap: 65px;
     margin-bottom: 0rem;
     background-size: 100% 69%;
     background-repeat: no-repeat;
+}
+
+.tabs {
+    flex: inherit;
+    height: fit-content;
 }
 
 .tab {
