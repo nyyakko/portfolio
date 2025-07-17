@@ -6,12 +6,14 @@ window.state = {
     }
 };
 
-function showToast(toast) {
-    var toast = document.getElementById(toast);
+function showToast(title, message) {
+    var toast = document.getElementById("toast");
+
+    toast.children[0].innerHTML = title;
+    toast.children[1].children[0].innerHTML = message;
+
     toast.classList.add("show");
-    setTimeout(() => {
-        toast.classList.remove("show");
-    }, 3000);
+    setTimeout(() => { toast.classList.remove("show"); }, 3000);
 }
 
 function scrambleText(element, text, intervalDelay = 45) {

@@ -204,7 +204,7 @@ export class Game {
             document.getElementById("hacking-complete").style.opacity = 1;
             setTimeout(() => {
                 this.muffleSong();
-                globalThis.showToast("toast-0");
+                globalThis.showToast("The [E]nd of YoRHa", "Parabéns por finalizar o minigame!");
                 document.getElementById("hacking-complete").style.opacity = 0;
                 document.getElementById("main-menu").style.display = "flex";
                 document.getElementById("canvas").style.display = "none";
