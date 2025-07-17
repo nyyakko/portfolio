@@ -44,6 +44,38 @@ async function loadSound(url) {
         .then(data => window.state.audio.context.decodeAudioData(data));
 }
 
+function playSound(song) {
+    if (window.state.audio.buffer[song] === undefined) {
+        throw new Error("Song must have been already loaded!");
+    }
+
+    if (window.state.audio.context.state === "suspended") {
+        window.state.audio.context.resume();
+    }
+
+    const source = window.state.audio.context.createBufferSource();
+    source.buffer = window.state.audio.buffer[song];
+    source.connect(window.state.audio.context.destination);
+    source.start();
+
+    return ({
+        source: source,
+        filters: {},
+        bindFilters: function () {
+            this.source.disconnect();
+            let filters = Object.values(this.filters);
+            let result = filters.reduce((song, filter) => song.connect(filter), this.source);
+            result.connect(window.state.audio.context.destination);
+        },
+        unbindFilters: function() {
+            this.source.disconnect();
+            let filters = Object.values(this.filters);
+            filters.forEach(filter => filter.disconnect());
+            this.source.connect(window.state.audio.context.destination);
+        }
+    });
+}
+
 function updateDescription(text) {
     let description = document.getElementById("description");
 
@@ -212,14 +244,6 @@ async function init() {
 
     Object.values(document.getElementsByClassName("button")).forEach(button => {
         button.addEventListener("mouseover", () => {
-            if (window.state.audio.context.state === "suspended") {
-                window.state.audio.context.resume();
-            }
-            const source = window.state.audio.context.createBufferSource();
-            source.buffer = window.state.audio.buffer["sfx-hover"];
-            source.connect(window.state.audio.context.destination);
-            source.start();
-
             if (button.getAttribute("skill") != undefined) {
                 let skill = document.getElementById(`skill-${button.getAttribute("skill")}`);
                 skill.style.transform = "scale(1.1)";
@@ -228,6 +252,8 @@ async function init() {
             if (button.getAttribute("description") != undefined) {
                 updateDescription(button.getAttribute("description"));
             }
+
+            playSound("sfx-hover");
         });
 
         button.addEventListener("mouseout", () => {
@@ -238,20 +264,11 @@ async function init() {
         });
 
         button.addEventListener("mousedown", () => {
-            if (window.state.audio.context.state === "suspended") {
-                window.state.audio.context.resume();
-            }
-
-            const source = window.state.audio.context.createBufferSource();
-
             if (button.getAttribute("skill") != undefined) {
-                source.buffer = window.state.audio.buffer["sfx-error"];
+                playSound("sfx-error");
             } else {
-                source.buffer = window.state.audio.buffer["sfx-click"];
+                playSound("sfx-click");
             }
-
-            source.connect(window.state.audio.context.destination);
-            source.start();
         });
     });
 

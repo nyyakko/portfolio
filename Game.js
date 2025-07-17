@@ -140,10 +140,10 @@ export class Game {
     constructor () {
         this.engine = new LibEngine();
         this.engine.initWindow(window.innerWidth, window.innerHeight);
-        this.engine.loadSound(`assets/sfx/player_shot.mp3`).then(shot => window.state.audio.buffer["sfx-player_shot"] = shot);
-        this.engine.loadSound(`assets/sfx/player_damage.mp3`).then(shot => window.state.audio.buffer["sfx-player_damage"] = shot);
-        this.engine.loadSound(`assets/sfx/player_death.mp3`).then(shot => window.state.audio.buffer["sfx-player_death"] = shot);
-        this.engine.loadSound(`assets/sfx/enemy_shot.mp3`).then(shot => window.state.audio.buffer["sfx-enemy_shot"] = shot);
+        globalThis.loadSound(`assets/sfx/player_shot.mp3`).then(shot => window.state.audio.buffer["sfx-player_shot"] = shot);
+        globalThis.loadSound(`assets/sfx/player_damage.mp3`).then(shot => window.state.audio.buffer["sfx-player_damage"] = shot);
+        globalThis.loadSound(`assets/sfx/player_death.mp3`).then(shot => window.state.audio.buffer["sfx-player_death"] = shot);
+        globalThis.loadSound(`assets/sfx/enemy_shot.mp3`).then(shot => window.state.audio.buffer["sfx-enemy_shot"] = shot);
     }
 
     makePlayer = () => {
@@ -200,7 +200,7 @@ export class Game {
             document.getElementById("hacking-complete").style.opacity = 1;
             setTimeout(() => {
                 this.muffleSong();
-                showToast("toast-0");
+                globalThis.showToast("toast-0");
                 document.getElementById("hacking-complete").style.opacity = 0;
                 document.getElementById("main-menu").style.display = "flex";
                 document.getElementById("canvas").style.display = "none";
@@ -274,11 +274,11 @@ export class Game {
         ];
 
         let index = Math.floor(Math.random() * SONGS.length);
-        let songBuffer = await this.engine.loadSound(`assets/songs/${SONGS[index].name}.mp3`);
+        let songBuffer = await globalThis.loadSound(`assets/songs/${SONGS[index].name}.mp3`);
 
         window.state.audio.buffer[SONGS[index].name] = songBuffer
 
-        this.state.song = this.engine.playSound(SONGS[index].name);
+        this.state.song = globalThis.playSound(SONGS[index].name);
         this.state.song.source.onended = () => {
             this.state.song = null;
             if (this.state.running) {
@@ -320,7 +320,7 @@ export class Game {
                     y: Math.sin(shooter.facingAngle) * 50 + (shooter.position.y + shooter.radius/2)
                 }
                 bulletVelocity = 3 * Player.MAX_VELOCITY;
-                this.engine.playSound("sfx-player_shot");
+                globalThis.playSound("sfx-player_shot");
                 break;
             }
             case shooter instanceof Follower: {
@@ -329,7 +329,7 @@ export class Game {
                     y: Math.sin(shooter.facingAngle) * 50 + (shooter.position.y + shooter.radius/2)
                 }
                 bulletVelocity = 4 * Enemy.MAX_VELOCITY;
-                this.engine.playSound("sfx-enemy_shot");
+                globalThis.playSound("sfx-enemy_shot");
                 break;
             }
         }
@@ -472,9 +472,9 @@ export class Game {
                 player.health -= player.health > 0;
                 player.canBeShot = false;
                 if (player.health >= 1) {
-                    this.engine.playSound("sfx-player_damage");
+                    globalThis.playSound("sfx-player_damage");
                 } else {
-                    this.engine.playSound("sfx-player_death");
+                    globalThis.playSound("sfx-player_death");
                 }
                 this.state.entities.push(new EnergyShock(player));
                 this.state.entities.push(new EnergyShield(player));

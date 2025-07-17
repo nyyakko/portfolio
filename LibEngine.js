@@ -119,51 +119,6 @@ export class LibEngine {
         this.context.keypressStack = {};
     }
 
-    playSound = (name, offset = 0, loop = { start: undefined, end: undefined }) => {
-        if (window.state.audio.buffer[name] === undefined) {
-            throw new Error("Song must have been already loaded!");
-        }
-
-        if (window.state.audio.context.state === "suspended") {
-            window.state.audio.context.resume();
-        }
-
-        const source = window.state.audio.context.createBufferSource();
-        source.buffer = window.state.audio.buffer[name];
-
-        if (loop.start != undefined && loop.end != undefined) {
-            source.loop = true;
-            source.loopStart = loop.start;
-            source.loopEnd = loop.end;
-        }
-
-        source.connect(window.state.audio.context.destination);
-        source.start(0, offset);
-
-        return ({
-            source: source,
-            filters: {},
-            bindFilters: function () {
-                this.source.disconnect();
-                let filters = Object.values(this.filters);
-                let result = filters.reduce((song, filter) => song.connect(filter), this.source);
-                result.connect(window.state.audio.context.destination);
-            },
-            unbindFilters: function() {
-                this.source.disconnect();
-                let filters = Object.values(this.filters);
-                filters.forEach(filter => filter.disconnect());
-                this.source.connect(window.state.audio.context.destination);
-            }
-        })
-    }
-
-    loadSound = async (url) => {
-        return fetch(url)
-            .then(res => res.arrayBuffer())
-            .then(data => window.state.audio.context.decodeAudioData(data));
-    }
-
     getCurrentTime = () => {
         return performance.now();
     }
