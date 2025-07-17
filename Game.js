@@ -163,7 +163,11 @@ export class Game {
 
         this.state.entities.push(this.makePlayer());
 
-        this.playSong();
+        if (this.state.song == null) {
+            this.playSong();
+        } else {
+            this.unmuffleSong();
+        }
 
         document.getElementById("main-menu").style.display = "none";
         document.getElementById("canvas").style.display = "block";
