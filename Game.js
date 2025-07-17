@@ -209,7 +209,6 @@ export class Game {
 
         this.state.started = false;
         this.state.running = false;
-        this.state.song = null;
         this.state.canChangeLevel = true;
         this.state.level = 0;
         this.state.score = 0;
