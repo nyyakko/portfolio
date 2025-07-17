@@ -1,4 +1,4 @@
-import { LibEngine } from "./LibEngine.js";
+import { LibEngine } from "./Engine.js";
 
 const MAX_LEVEL_COUNT = 20;
 
