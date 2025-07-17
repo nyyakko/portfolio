@@ -165,6 +165,24 @@ body {
     display: flex;
 }
 
+#img-yohra {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+
+    @media (min-width: 1400px) {
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+
+    @media (min-width: 600px) and (max-width: 1400px) {
+        transform: translate(-50%, -50%);
+    }
+
+    opacity: 0.1;
+    object-fit: cover;
+    z-index: -1;
+}
+
 #img-lines, #img-circles {
     position: absolute;
     top: 0;
@@ -248,6 +266,7 @@ main {
     height: inherit;
     display: flex;
     flex-direction: column;
+    justify-content: center;
 
     & .container {
         flex: 1;
