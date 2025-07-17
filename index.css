@@ -274,22 +274,11 @@ h2 {
 
 .pagesbar { display: flex; }
 
-@media (min-width: 1900px) {
+@media (min-width: 600px) {
     #tab-0-content .pagesbar,
     #tab-1-content .pagesbar,
-    #tab-2-content .pagesbar { width: 35%; }
-}
-
-@media (min-width: 1000px) and (max-width: 1900px) {
-    #tab-0-content .pagesbar,
-    #tab-1-content .pagesbar,
-    #tab-2-content .pagesbar { width: 35%; }
-}
-
-@media (min-width: 600px) and (max-width: 1000px) {
-    #tab-0-content .pagesbar,
-    #tab-1-content .pagesbar,
-    #tab-2-content .pagesbar { width: 35%; }
+    #tab-2-content .pagesbar,
+    #tab-3-content .pagesbar { width: 35%; }
 }
 
 .pagebar {
@@ -313,6 +302,18 @@ h2 {
         padding-bottom: 10px;
         background: rgb(var(--accent-color-light));
     }
+}
+
+@media (min-width: 1900px) {
+#pagebar-0d .v-decoration { height: 350px; overflow: scroll; }
+}
+
+@media (min-width: 1400px) and (max-width: 1900px) {
+#pagebar-0d .v-decoration { height: 300px; overflow: scroll; }
+}
+
+@media (min-width: 600px) and (max-width: 1400px) {
+#pagebar-0d .v-decoration { height: 200px; overflow: scroll; }
 }
 
 .pages {
@@ -381,6 +382,25 @@ h2 {
             height: 100%;
             justify-content: center;
             text-align: center;
+        }
+    }
+
+    & .page-content.generated {
+        @media (min-width: 1900px) {
+            width: 500px;
+            height: 450px;
+        }
+
+        @media (min-width: 1400px) and (max-width: 1900px) {
+            overflow: scroll;
+            width: 350px;
+            height: 280px;
+        }
+
+        @media (min-width: 600px) and (max-width: 1400px) {
+            overflow: scroll;
+            width: 400px;
+            height: 250px;
         }
     }
 
@@ -804,7 +824,7 @@ h2 {
     margin-bottom: 1rem;
 
     &.active::after {
-        height: 50%;
+        height: 16px;
     }
 }
 

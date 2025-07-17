@@ -133,6 +133,7 @@ export class Game {
         canChangeLevel: true,
         level: 0,
         score: 0,
+        kills: 0,
         trollingFactor: 0,
         entities: []
     }
@@ -190,6 +191,15 @@ export class Game {
     }
 
     stop = ({ failed, finished } = { failed: false, finished: false }) => {
+        let scoreTabButton = document.getElementById("tab-button-3");
+        scoreTabButton.style.visibility = "visible";
+
+        globalThis.saveScore({
+            score: this.state.score,
+            level: this.state.level,
+            kills: this.state.kills
+        });
+
         if (failed) {
             document.getElementById("hacking-failed").style.opacity = 1;
             setTimeout(() => {
@@ -216,6 +226,7 @@ export class Game {
         this.state.canChangeLevel = true;
         this.state.level = 0;
         this.state.score = 0;
+        this.state.kills = 0;
         this.state.trollingFactor = 0;
         this.state.entities = [];
 
@@ -377,11 +388,9 @@ export class Game {
                 enemy.health -= 1;
             }
             if (enemy.health == 0) {
-                if (enemy instanceof Core) {
-                    this.state.score += 15;
-                } else if (enemy instanceof Follower) {
-                    this.state.score += 5;
-                }
+                if (enemy instanceof Core) this.state.score += 15;
+                if (enemy instanceof Follower) this.state.score += 5;
+                this.state.kills += 1;
             }
         });
 

@@ -6,6 +6,92 @@ window.state = {
     }
 };
 
+function showScore(score) {
+    let pagebar = document.getElementById("pagebar-0d");
+    let pageButtons = pagebar.children[0].children[0];
+
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0');
+    let yyyy = today.getFullYear();
+    score.date = `${dd}/${mm}/${yyyy}`;
+
+    let button = document.createElement("button");
+    button.addEventListener("mousedown", () => playSound("sfx-click"));
+    button.addEventListener("mouseover", () => {
+        updateDescription(button.getAttribute("description"));
+        playSound("sfx-hover");
+    });
+
+    button.classList.add("page-button");
+    button.classList.add("button");
+    button.classList.add("light");
+
+    button.setAttribute("page", `${pageButtons.childElementCount}d`);
+    button.setAttribute("onclick", "changePage(event)");
+    button.setAttribute("description", `Score de ${score.date}, ${score.score} pontos`);
+
+    let caret = document.createElement("div");
+    caret.classList.add("button-caret");
+    button.appendChild(caret);
+
+    button.append(`Pontuação ${pageButtons.childElementCount}`);
+
+    let page = document.createElement("div");
+    page.setAttribute("id", `page-${pageButtons.childElementCount}d`);
+    page.classList.add("page");
+    page.classList.add("letter");
+
+    let title = document.createElement("h2");
+    title.classList.add("page-title");
+    title.innerHTML = `Score ${pageButtons.childElementCount} - ${score.date}`;
+    page.appendChild(title);
+
+    let content = document.createElement("section");
+    content.setAttribute("id", `page-${pageButtons.childElementCount}d-content`);
+    content.classList.add("page-content");
+    content.classList.add("generated");
+    content.innerHTML =
+        "<section>" +
+            "<div>" +
+                "<section>De: O Sistema</section>" +
+            "</div>" +
+            "<div class='separator'></div>" +
+            "<div>" +
+                "<section>Data:</section>" +
+                `<section>${score.date}</section>` +
+            "</div>" +
+            "<div>" +
+                "<section>Pontuação atingida:</section>" +
+                `<section>${score.score}</section>` +
+            "</div>" +
+            "<div>" +
+                "<section>Level alcançado:</section>" +
+                `<section>${score.level}</section>` +
+            "</div>" +
+            "<div>" +
+                "<section>Inimigos derrotados:</section>" +
+                `<section>${score.kills}</section>` +
+            "</div>" +
+        "</section>"
+    ;
+
+    page.appendChild(content);
+
+    pageButtons.appendChild(button);
+    document.getElementById("tab-3-content").children[1].appendChild(page);
+}
+
+function saveScore(score) {
+    let scores = [];
+    if (localStorage.getItem("scores")) {
+        scores = JSON.parse(localStorage.getItem("scores"));
+    }
+    scores.push(score);
+    localStorage.setItem("scores", JSON.stringify(scores));
+    showScore(score);
+}
+
 function showToast(title, message) {
     var toast = document.getElementById("toast");
 
@@ -303,5 +389,10 @@ async function init() {
     window.state.audio.buffer["sfx-click"] = await loadSound("assets/sfx/click.mp3");
     window.state.audio.buffer["sfx-error"] = await loadSound("assets/sfx/error.mp3");
     window.state.audio.buffer["sfx-enter"] = await loadSound("assets/sfx/enter.mp3");
+
+    if (localStorage.getItem("scores")) {
+        JSON.parse(localStorage.getItem("scores")).forEach(score => showScore(score));
+        document.getElementById("tab-button-3").style.visibility = "visible";
+    }
 }
 
