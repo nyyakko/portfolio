@@ -258,22 +258,22 @@ export class Game {
 
     playSong = async () => {
         const SONGS = [
-            { name: "a_beautiful_song-8bit" },
-            { name: "amusement_park-8bit" },
-            { name: "birth_of_a_wish-8bit" },
-            { name: "city_ruins-8bit" },
-            { name: "dark_colossus_kaiju-8bit" },
-            { name: "dependent_weakling-8bit" },
-            { name: "end_of_the_unknown-8bit" },
-            { name: "forest_kingdom-8bit" },
-            { name: "memories_of_dust-8bit" },
-            { name: "possessed_by_disease-8bit" },
-            { name: "song_of_the_ancients_atonement-8bit" },
-            { name: "the_song_of_the_end-8bit" },
-            { name: "the_tower-8bit" },
-            { name: "war_and_war-8bit" },
-            { name: "weight_of_the_world-8bit" },
-            { name: "wretched_weaponry-8bit" },
+            { name: "a_beautiful_song-8bit", real: "A beatiful song" },
+            { name: "amusement_park-8bit", real: "Amusement Park" },
+            { name: "birth_of_a_wish-8bit", real: "Birth of a Wish" },
+            { name: "city_ruins-8bit", real: "City Ruins" },
+            { name: "dark_colossus_kaiju-8bit", real: "Dark Colossus" },
+            { name: "dependent_weakling-8bit", real: "Dependent Weakling" },
+            { name: "end_of_the_unknown-8bit", real: "End of the Unknown" },
+            { name: "forest_kingdom-8bit", real: "Forest Kingdom" },
+            { name: "memories_of_dust-8bit", real: "Memories of Dust" },
+            { name: "possessed_by_disease-8bit", real: "Possessed by Disease" },
+            { name: "song_of_the_ancients_atonement-8bit", real: "Song of the Ancients - Atonement" },
+            { name: "the_song_of_the_end-8bit", real: "The song of the End" },
+            { name: "the_tower-8bit", real: "The Tower" },
+            { name: "war_and_war-8bit", real: "War and War" },
+            { name: "weight_of_the_world-8bit", real: "Weight of the World" },
+            { name: "wretched_weaponry-8bit", real: "Wretched Weaponry" },
         ];
 
         let index = Math.floor(Math.random() * SONGS.length);
@@ -288,6 +288,8 @@ export class Game {
                 this.playSong();
             }
         };
+
+        globalThis.showToast("Tocando agora", `NieR: Automata OST - ${SONGS[index].real} - 8 Bit`);
     }
 
     muffleSong = () => {
