@@ -316,7 +316,7 @@ h2 {
 
 .tabbar .v-decoration {
     display: flex;
-    gap: 30px;
+    gap: 65px;
     margin-bottom: 0rem;
     background-size: 100% 69%;
     background-repeat: no-repeat;
@@ -782,9 +782,24 @@ h2 {
         transition: .1s;
     }
 
+    & div {
+        opacity: 0;
+        content: url("assets/images/cursor_dark.png");
+        position: absolute;
+        top: 50%;
+        left: -45px;
+        width: 16px;
+        height: 16px;
+        transform: translateY(-50%) scale(2.5);
+        transform-origin: 50% 50%;
+        transition: opacity .2s;
+    }
+
     &:hover {
         color: rgb(var(--fg-color-light));
         background-position: left;
+
+        & div { opacity: 1; }
 
         &::before {
             transform: translateY(-50%) rotate(45deg);
@@ -801,6 +816,11 @@ h2 {
     &::before {
         transform: translateY(-50%) rotate(-90deg);
         background-color: rgb(var(--accent-color-light));
+    }
+
+    & div {
+        opacity: 1;
+        content: url("assets/images/cursor_light.png");
     }
 }
 
