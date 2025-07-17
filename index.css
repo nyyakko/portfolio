@@ -747,6 +747,7 @@ h2 {
     }
 
     & div {
+        pointer-events: none;
         opacity: 0;
         content: url("assets/images/cursor_dark.png");
         position: absolute;
