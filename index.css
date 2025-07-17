@@ -305,7 +305,12 @@ h2 {
 }
 
 @media (min-width: 1900px) {
-#pagebar-0d .v-decoration { height: 350px; overflow: scroll; }
+#pagebar-0d {
+    height: 350px;
+    & .v-decoration {
+        overflow: scroll;
+    }
+}
 }
 
 @media (min-width: 1400px) and (max-width: 1900px) {
