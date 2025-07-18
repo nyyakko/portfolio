@@ -176,6 +176,7 @@ export class Game {
         document.getElementById("canvas").style.display = "block";
         document.getElementById("begin-hacking").style.opacity = 1;
         setTimeout(() => {
+            this.state.entities[0].canBeShot = true;
             document.getElementById("begin-hacking").style.opacity = 0;
         }, 2000);
 
@@ -733,6 +734,8 @@ export class Game {
         if (player.health == 0) {
             this.stop({ failed: true });
         }
+
+        console.log(player.canBeShot);
     }
 }
 
