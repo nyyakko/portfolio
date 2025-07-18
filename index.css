@@ -201,17 +201,16 @@ canvas {
 }
 
 main {
-    width: inherit;
-    height: inherit;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
 
-    & .container {
+    .main-content {
+        display: flex;
+        flex-direction: column;
         flex: 1;
-        display: inherit;
-        flex-direction: inherit;
-        gap: 10px;
+        height: 100%;
     }
 
     & footer {
@@ -257,22 +256,24 @@ h2 {
 }
 
 .tabs {
-    flex: inherit;
-    height: fit-content;
+    height: 100%;
 }
 
 .tab {
     height: 100%;
+    flex-direction: column;
 
     & .tab-content {
-        height: inherit;
+        flex: 1;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
     }
 }
 
-.pagesbar { display: flex; }
+.pagesbar {
+    height: 100%;
+}
 
 @media (min-width: 600px) {
     #tab-0-content .pagesbar,
@@ -282,43 +283,29 @@ h2 {
 }
 
 .pagebar {
+    height: 100%;
     width: 100%;
-    display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 15px;
 
     & .page-list {
+        flex: 1;
+        max-height: 50vh;
+        padding: 0px;
         gap: 15px;
         display: flex;
         flex-direction: column;
-        justify-content: center;
     }
 
     & .page-list.light {
+        overflow-y: auto;
         gap: 0;
         box-shadow: 3px 3px 0px 1px rgb(var(--accent-color-dark));
         padding-top: 10px;
         padding-bottom: 10px;
         background: rgb(var(--accent-color-light));
     }
-}
-
-@media (min-width: 1900px) {
-#pagebar-0d {
-    height: 350px;
-    & .v-decoration {
-        overflow: scroll;
-    }
-}
-}
-
-@media (min-width: 1400px) and (max-width: 1900px) {
-#pagebar-0d .v-decoration { height: 300px; overflow: scroll; }
-}
-
-@media (min-width: 600px) and (max-width: 1400px) {
-#pagebar-0d .v-decoration { height: 200px; overflow: scroll; }
 }
 
 .pages {
@@ -390,56 +377,27 @@ h2 {
         }
     }
 
-    & .page-content.generated {
-        @media (min-width: 1900px) {
-            width: 500px;
-            height: 450px;
-        }
-
-        @media (min-width: 1400px) and (max-width: 1900px) {
-            overflow: scroll;
-            width: 350px;
-            height: 280px;
-        }
-
-        @media (min-width: 600px) and (max-width: 1400px) {
-            overflow: scroll;
-            width: 400px;
-            height: 250px;
-        }
-    }
-
     @media (min-width: 1900px) {
-        #page-0a-content, #page-0b-content, #page-0c-content {
-            width: 500px;
-            height: 450px;
-        }
-
-        #page-1a-content, #page-2a-content, #page-3a-content, #page-4a-content, #page-5a-content,
-        #page-1c-content, #page-2c-content {
+        & .page-content {
             overflow: scroll;
-            width: 600px;
-            height: 450px;
+            width: 30vw;
+            height: 45vh;
         }
     }
 
     @media (min-width: 1400px) and (max-width: 1900px) {
-        #page-0a-content, #page-1a-content, #page-2a-content, #page-3a-content, #page-4a-content, #page-5a-content,
-        #page-0b-content,
-        #page-0c-content, #page-1c-content, #page-2c-content {
+        & .page-content {
             overflow: scroll;
-            width: 350px;
-            height: 280px;
+            width: 30vw;
+            height: 45vh;
         }
     }
 
     @media (min-width: 600px) and (max-width: 1400px) {
-        #page-0a-content, #page-1a-content, #page-2a-content, #page-3a-content, #page-4a-content, #page-5a-content,
-        #page-0b-content,
-        #page-0c-content, #page-1c-content, #page-2c-content {
+        & .page-content {
             overflow: scroll;
-            width: 400px;
-            height: 250px;
+            width: 30vw;
+            height: 45vh;
         }
     }
 }
@@ -506,8 +464,6 @@ h2 {
     height: inherit;
     background-repeat: no-repeat;
     padding-left: 4rem;
-    margin-top: 0rem;
-    margin-bottom: 0rem;
     background-image:
         linear-gradient(
             90deg,
@@ -746,7 +702,8 @@ h2 {
         transition: .1s;
     }
 
-    & div {
+    & .button-caret {
+        position: fixed;
         pointer-events: none;
         opacity: 0;
         content: url("assets/images/cursor_dark.png");
@@ -758,13 +715,16 @@ h2 {
         transform: translateY(-50%) scale(2.5);
         transform-origin: 50% 50%;
         transition: opacity .2s;
+        z-index: 9999;
     }
 
     &:hover {
         color: rgb(var(--fg-color-light));
         background-position: left;
 
-        & div { opacity: 1; }
+        & .button-caret {
+            opacity: 1;
+        }
 
         &::before {
             transform: translateY(-50%) rotate(45deg);
@@ -783,9 +743,9 @@ h2 {
         background-color: rgb(var(--accent-color-light));
     }
 
-    & div {
-        opacity: 1;
+    & .button-caret {
         content: url("assets/images/cursor_light.png");
+        opacity: 1;
     }
 }
 

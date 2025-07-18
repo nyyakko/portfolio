@@ -168,10 +168,10 @@ function updateDescription(text) {
     let description = document.getElementById("description");
 
     if (text !== '') {
-        description.firstChild.innerHTML = text;
-        description.firstChild.style.opacity = 1;
+        description.children[0].innerHTML = text;
+        description.children[0].style.opacity = 1;
     } else {
-        description.firstChild.style.opacity = 0;
+        description.children[0].style.opacity = 0;
     }
 }
 
@@ -239,7 +239,7 @@ function changeTab({ currentTarget }) {
 
     let tab = document.getElementById(`tab-${currentTarget.getAttribute("tab")}`);
 
-    tab.style.display = "block";
+    tab.style.display = "flex";
     tab.classList.add("active");
 
     let title = tab.getElementsByClassName("tab-title")[0];
