@@ -72,12 +72,11 @@ class Bullet extends Entity {
     static RADIUS = 15;
     static MAX_LIFE_TIME = 6000;
 
-    owner = null
-
-    constructor(owner) {
+    constructor(owner = null, indistructible = false) {
         super();
         super.radius = Bullet.RADIUS;
         this.owner = owner;
+        this.indistructible = indistructible;
         this.lifetime = Bullet.MAX_LIFE_TIME + performance.now();
     }
 }
@@ -100,7 +99,9 @@ class Enemy extends Entity {
 class Core extends Enemy {
     static RADIUS = 30;
 
-    constructor(position, velocity, health = 2) {
+    scared = false;
+
+    constructor(position, velocity, health = 8) {
         super();
         super.position = position;
         super.velocity = velocity;
@@ -135,7 +136,8 @@ export class Game {
         score: 0,
         kills: 0,
         trollingFactor: 0,
-        entities: []
+        entities: [],
+        enemies: 0
     }
 
     constructor () {
@@ -363,6 +365,31 @@ export class Game {
         this.state.entities.push(bullet);
     }
 
+    rotation = 0;
+
+    shootPattern = (shooter) => {
+        const directions = [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2];
+
+        directions.forEach(direction => {
+            let bulletVelocity = 4 * Enemy.MAX_VELOCITY;
+            let angle = this.rotation + direction;
+
+            let bullet = new Bullet(shooter);
+
+            bullet.position = {
+                x: Math.cos(angle) * 2 * Core.RADIUS + shooter.position.x,
+                y: Math.sin(angle) * 2 * Core.RADIUS + shooter.position.y
+            }
+
+            bullet.velocity = {
+                x: bulletVelocity * Math.cos(angle),
+                y: bulletVelocity * Math.sin(angle)
+            };
+
+            this.state.entities.push(bullet);
+        });
+    }
+
     updateEnemy = (enemy) => {
         let bullets =
             this.state.entities
@@ -375,8 +402,15 @@ export class Game {
 
             let posA = bullet.position;
             let posB = { x: enemy.position.x + enemy.radius/2 , y: enemy.position.y + enemy.radius/2 };
-            if (!this.engine.checkCollisionCircles(posA, bullet.radius, posB, enemy.radius/4)) {
-                return;
+
+            if (enemy instanceof Core) {
+                if (!this.engine.checkCollisionCircles(posA, bullet.radius, posB, enemy.radius)) {
+                    return;
+                }
+            } else if (enemy instanceof Follower) {
+                if (!this.engine.checkCollisionCircles(posA, bullet.radius, posB, enemy.radius/4)) {
+                    return;
+                }
             }
 
             bullet.lifetime = 0;
@@ -398,6 +432,20 @@ export class Game {
             case enemy instanceof Core: {
                 if ((enemy.position.x >= (window.innerWidth - enemy.radius)) || (enemy.position.x <= enemy.radius)) enemy.velocity.x *= -1.0;
                 if ((enemy.position.y >= (window.innerHeight - enemy.radius)) || (enemy.position.y <= enemy.radius)) enemy.velocity.y *= -1.0;
+
+                let cooldown = 2000;
+
+                let remainingEnemies = this.state.entities.filter(entity => entity instanceof Follower).length;
+                if (remainingEnemies == 0 && this.state.trollingFactor <= 1) {
+                    cooldown = 400;
+                }
+
+                const currentTime = this.engine.getCurrentTime();
+                if (currentTime - enemy.lastShotTime >= cooldown) {
+                    enemy.lastShotTime = currentTime;
+                    this.shootPattern(enemy);
+                }
+
                 break;
             }
             case enemy instanceof Follower: {
@@ -601,11 +649,11 @@ export class Game {
         this.state.entities = this.state.entities.filter(entity => entity instanceof Player);
         let player = this.state.entities[0];
         player.canBeShot = false;
-        setTimeout(() => player.canBeShot = true, 2000);
 
         if (this.state.level > 1) {
             document.getElementById("hacking-level-complete").style.opacity = 1;
             await sleep(4000);
+            setTimeout(() => player.canBeShot = true, 2000);
             document.getElementById("hacking-level-complete").style.opacity = 0;
         }
 
@@ -613,16 +661,24 @@ export class Game {
             return new Follower(this.getRandomSpawnPosition(Follower.RADIUS));
         });
 
-        this.state.trollingFactor = random(0, 4);
-
-        enemies.push(new Core(this.getRandomSpawnPosition(Core.RADIUS), { x: random(1, 10), y: random(1, 10) }));
         enemies.forEach(enemy => this.state.entities.push(enemy));
 
+        let cores = [];
+
+        if (this.state.level > 5) {
+            cores.push(new Core(this.getRandomSpawnPosition(Core.RADIUS), { x: 0.5, y: 0.5 }));
+        }
+
+        cores.forEach(enemy => this.state.entities.push(enemy));
+
+        this.state.trollingFactor = random(0, 4);
         this.state.canChangeLevel = true;
     }
 
     nextFrame = () => {
         this.engine.clearBackground("#c8c2aa");
+
+        this.rotation += 0.1;
 
         for (let x = 0; x <= window.innerWidth; x += 50) this.engine.drawLine(x, 0, x, window.innerHeight, "#ccc", 1);
         for (let y = 0; y <= window.innerHeight; y += 50) this.engine.drawLine(0, y, window.innerWidth, y, "#ccc", 1);
@@ -656,10 +712,8 @@ export class Game {
             }
         }
 
-        let enemyCount = this.state.entities.filter(entity => entity instanceof Enemy).length;
-        let hasEnemies = enemyCount >= 1;
-
-        if (enemyCount == 1 && this.state.trollingFactor > 0) {
+        let followers = this.state.entities.filter(entity => entity instanceof Follower);
+        if (followers.length == 1 && this.state.trollingFactor > 0) {
             this.state.trollingFactor -= 1;
             let enemies = Array.from({ length: random(1, 3) }, () => {
                 return new Follower(this.getRandomSpawnPosition(Follower.RADIUS));
@@ -667,8 +721,9 @@ export class Game {
             enemies.forEach(enemy => this.state.entities.push(enemy));
         }
 
-        if (!hasEnemies && this.state.canChangeLevel) {
-            if (this.state.level <= MAX_LEVEL_COUNT) {
+        let enemies = this.state.entities.filter(entity => entity instanceof Enemy);
+        if (!enemies.length && this.state.canChangeLevel) {
+            if (this.state.level < MAX_LEVEL_COUNT) {
                 this.nextLevel();
             } else {
                 this.stop({ finished: true });
