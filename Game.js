@@ -734,8 +734,6 @@ export class Game {
         if (player.health == 0) {
             this.stop({ failed: true });
         }
-
-        console.log(player.canBeShot);
     }
 }
 
