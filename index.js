@@ -31,9 +31,10 @@ function showScore(score) {
     button.setAttribute("onclick", "changePage(event)");
     button.setAttribute("description", `Score de ${score.date}, ${score.score} pontos`);
 
-    let caret = document.createElement("div");
-    caret.classList.add("button-caret");
-    button.appendChild(caret);
+    // FIXME: isso não aparece pelo fato de que o pages-list tem overflow-y: auto.
+    // let caret = document.createElement("div");
+    // caret.classList.add("button-caret");
+    // button.appendChild(caret);
 
     button.append(`Pontuação ${pageButtons.childElementCount}`);
 
